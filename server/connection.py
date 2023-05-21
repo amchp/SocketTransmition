@@ -10,6 +10,7 @@ class Server():
 
     def __init__(self)  -> None:
         self.self_host = None
+        self.connection_port = None
         self.socket = None
         self.set_connection()
     
