@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import os
 from types import FunctionType
 from decompress import Decompress
+from decrypt import Decrypt
+
 
 CHUNK_SIZE = 250 * 1000
 
@@ -40,14 +42,23 @@ class Server:
         self.socket.bind((self.self_host, self.connection_port))
         self.socket.listen(Server.backlog)
         self.accept_connections()
+        
+    def set_key(self, client_socket: socket.socket, key: bytes) -> None:
+        client_socket.send(key)
 
     def accept_connections(self) -> None:
         while True:
             client_socket, client_address = self.socket.accept()
+            
             self.receive_messages(client_socket)
 
     @multithread
     def receive_messages(self, client_socket: socket.socket) -> None:
+        decompressor = Decompress()
+        decryptor = Decrypt()
+        key = decryptor.generate_key()
+        self.set_key(client_socket, key)
+        
         while True:            
             data: bytes = b""
             while True:
@@ -61,7 +72,9 @@ class Server:
             
             if data != b"":
                 print(f"socket {client_socket.getpeername()} complete data received")
+                # Decrypt data
+                data = decryptor.decrypt(data, key)
+                
                 # Decompress data
-                decompressor = Decompress()
                 decompressor.decompress_data(data) 
                 print(f"socket {client_socket.getpeername()} decompressed data")
