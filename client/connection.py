@@ -28,12 +28,16 @@ class Client:
 
     def send_file(self, client_socket : socket, file_path : str) -> None:
         # Compress file
+        print(f"Compressing {file_path}")
         compressor = Compress()
         file_compressed = compressor.compress_file(file_path)
+        print(f"Compressed file: {file_compressed}")
         
         # Encrypt file
+        print(f"Encrypting {file_compressed}")
         encryptor = Encrypt()
         file_encrypted = encryptor.encrypt_file(file_compressed, self.key)
+        print(f"Encrypted file: {file_encrypted}")
         
         # Send file
         file_size = os.path.getsize(file_encrypted)

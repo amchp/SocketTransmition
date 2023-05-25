@@ -73,8 +73,11 @@ class Server:
             if data != b"":
                 print(f"socket {client_socket.getpeername()} complete data received")
                 # Decrypt data
+                print(f"socket {client_socket.getpeername()} decrypting data")
                 data = decryptor.decrypt(data, key)
+                print(f"socket {client_socket.getpeername()} decrypted data")
                 
                 # Decompress data
+                print(f"socket {client_socket.getpeername()} decompressing data")
                 decompressor.decompress_data(data) 
                 print(f"socket {client_socket.getpeername()} decompressed data")
