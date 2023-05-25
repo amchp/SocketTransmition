@@ -22,7 +22,7 @@ class Decompress:
         with open(tar_path, "wb") as file:
             file.write(data)
         file.close()
-         
+        
         with tarfile.open(tar_path, "r:*") as tar:
             for member in tar.getmembers():
                 if member.isdir():
@@ -32,7 +32,6 @@ class Decompress:
                 temporal_file = os.path.basename(temporal_file)
                 
                 member.name = temporal_file + os.path.basename(member.name)
-                print(member.name)
                 
                 tar.extract(member, "files")
                     

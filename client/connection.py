@@ -25,8 +25,10 @@ class Client:
   
         file_size = os.path.getsize(file_compressed)
         chunks = ceil(file_size / CHUNK_SIZE)
+        print(f"Sending {file_path} ({file_size} bytes) in {chunks} chunks")
         with open(file_compressed, "rb") as file:
             for _ in range(chunks):
+                print(f"Sending chunk {_+1}/{chunks}")
                 client_socket.send(file.read(CHUNK_SIZE))
         client_socket.close()
         

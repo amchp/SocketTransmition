@@ -56,8 +56,12 @@ class Server:
                 if chunk_data == b"":
                     break
                 
+                print(f"socket {client_socket.getpeername()} received {len(chunk_data)} bytes")
                 data += chunk_data
             
-            # Decompress data
-            decompressor = Decompress()
-            decompressor.decompress_data(data) 
+            if data != b"":
+                print(f"socket {client_socket.getpeername()} complete data received")
+                # Decompress data
+                decompressor = Decompress()
+                decompressor.decompress_data(data) 
+                print(f"socket {client_socket.getpeername()} decompressed data")
