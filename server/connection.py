@@ -3,6 +3,7 @@ import threading
 from dotenv import load_dotenv
 import os
 from types import FunctionType
+from decompress import Decompress
 
 CHUNK_SIZE = 250 * 1000
 
@@ -47,17 +48,16 @@ class Server:
 
     @multithread
     def receive_messages(self, client_socket: socket.socket) -> None:
-        while True:
-            data: bytes = client_socket.recv(CHUNK_SIZE)
-            if data == b"":
-                continue
-            headers: list[bytes] = data.split()
-            print(headers[1])
-            data = b" ".join(data.split()[2:])
-            length: int = int(headers[0].decode())
-            file_name: str = headers[1].decode()
-            while len(data) < length:
-                data += client_socket.recv(CHUNK_SIZE)
-                print(length, len(data))
-            with open(f"./files/{file_name}", "bw") as file:
-                file.write(data)
+        while True:            
+            data: bytes = b""
+            while True:
+                chunk_data = client_socket.recv(CHUNK_SIZE)
+                
+                if chunk_data == b"":
+                    break
+                
+                data += chunk_data
+            
+            # Decompress data
+            decompressor = Decompress()
+            decompressor.decompress_data(data) 

@@ -1,7 +1,7 @@
-from dotenv import load_dotenv
 import os
-from socket import socket
+import socket
 from math import ceil
+from compress import Compress
 
 CHUNK_SIZE = 250*1000
 
@@ -15,14 +15,19 @@ class Client:
         self.send_file(client_socket, file_path)
 
     def get_socket(self) -> socket:  # Creates a BT socket
-        s = socket(socket.AF_INET, socket.SOCK_STREAM)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         return s
 
     def send_file(self, client_socket : socket, file_path : str) -> None:
         # Compress file
-        file_size = os.path.getsize(file_path)
+        compressor = Compress()
+        file_compressed = compressor.compress_file(file_path)
+  
+        file_size = os.path.getsize(file_compressed)
         chunks = ceil(file_size / CHUNK_SIZE)
-        with open(file_path, "rb") as file:
+        with open(file_compressed, "rb") as file:
             for _ in range(chunks):
-                client_socket.send(file.read(self.buffer))
+                client_socket.send(file.read(CHUNK_SIZE))
         client_socket.close()
+        
+        os.remove(file_compressed)
