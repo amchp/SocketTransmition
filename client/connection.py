@@ -32,7 +32,7 @@ class Client:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         return s
 
-    def send_file(self, client_socket : socket, file_path : str) -> None:
+    def send_file(self, client_socket : socket.socket, file_path : str) -> None:
         # Compress file
         print(f"Compressing {file_path}")
         compressor = Compress()
