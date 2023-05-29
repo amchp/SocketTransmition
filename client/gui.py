@@ -28,16 +28,22 @@ class GUI:
             try:
                 nombre_archivo = os.path.abspath(archivo)
                 self.client.start_client(ip, nombre_archivo)
-                messagebox.showinfo("Success", f"{nombre_archivo} has been sent succesfully")
-            except:
-                messagebox.showerror("Error", "Error when sending the message check IP address and conectivity")
+                messagebox.showinfo("Success", f"{os.path.basename(nombre_archivo)} has been sent succesfully")
+            except Exception as err:
+                messagebox.showerror("Error", "Error when sending the file check IP address and conectivity")
+                print(err)
             
     def enviar_directorio(self):
-        archivo = filedialog.askdirectory()
+        directory = filedialog.askdirectory()
         ip = self.ip_field_entry.get()
-        if archivo and ip:
-            nombre_archivo = os.path.abspath(archivo)
-            self.client.start_client(ip, nombre_archivo)
+        if directory and ip:
+            try:
+                nombre_directorio = os.path.abspath(directory)
+                self.client.start_client(ip, nombre_directorio)
+                messagebox.showinfo("Success", f"{os.path.basename(nombre_directorio)} has been sent succesfully")
+            except Exception as err:
+                messagebox.showerror("Error", "Error when sending the file check IP address and conectivity")
+                print(err)
     
     def __init__(self):
         self.window_client()
