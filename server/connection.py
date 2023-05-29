@@ -3,6 +3,9 @@ import threading
 from dotenv import load_dotenv
 import os
 from types import FunctionType
+from decompress import Decompress
+from decrypt import Decrypt
+
 
 CHUNK_SIZE = 250 * 1000
 
@@ -32,32 +35,49 @@ class Server:
 
     def set_tcp_parameter(self) -> None:
         self.self_host = os.getenv("SELFIP")
-        self.connection_port = int(os.getenv("TCP_PORT"))
+        self.connection_port = int(os.getenv("PORT"))
 
     def start_server(self) -> None:
         print("Start Server", flush=True)
         self.socket.bind((self.self_host, self.connection_port))
         self.socket.listen(Server.backlog)
         self.accept_connections()
+        
+    def set_key(self, client_socket: socket.socket, key: bytes) -> None:
+        client_socket.send(key)
 
     def accept_connections(self) -> None:
         while True:
             client_socket, client_address = self.socket.accept()
+            
             self.receive_messages(client_socket)
 
     @multithread
     def receive_messages(self, client_socket: socket.socket) -> None:
-        while True:
-            data: bytes = client_socket.recv(CHUNK_SIZE)
-            if data == b"":
-                continue
-            headers: list[bytes] = data.split()
-            print(headers[1])
-            data = b" ".join(data.split()[2:])
-            length: int = int(headers[0].decode())
-            file_name: str = headers[1].decode()
-            while len(data) < length:
-                data += client_socket.recv(CHUNK_SIZE)
-                print(length, len(data))
-            with open(f"./files/{file_name}", "bw") as file:
-                file.write(data)
+        decompressor = Decompress()
+        decryptor = Decrypt()
+        key = decryptor.generate_key()
+        self.set_key(client_socket, key)
+        
+        while True:            
+            data: bytes = b""
+            while True:
+                chunk_data = client_socket.recv(CHUNK_SIZE)
+                
+                if chunk_data == b"":
+                    break
+                
+                print(f"socket {client_socket.getpeername()} received {len(chunk_data)} bytes")
+                data += chunk_data
+            
+            if data != b"":
+                print(f"socket {client_socket.getpeername()} complete data received")
+                # Decrypt data
+                print(f"socket {client_socket.getpeername()} decrypting data")
+                data = decryptor.decrypt(data, key)
+                print(f"socket {client_socket.getpeername()} decrypted data")
+                
+                # Decompress data
+                print(f"socket {client_socket.getpeername()} decompressing data")
+                decompressor.decompress_data(data) 
+                print(f"socket {client_socket.getpeername()} decompressed data")
