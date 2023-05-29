@@ -18,7 +18,7 @@ class Decompress:
         self.check_temp_dir()
         self.check_files_dir()
         
-        tar_path = f".{tempfile.NamedTemporaryFile().name}.tar.gz"
+        tar_path = f"{tempfile.NamedTemporaryFile().name}.tar.gz"
         with open(tar_path, "wb") as file:
             file.write(data)
         file.close()
