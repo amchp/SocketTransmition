@@ -12,7 +12,7 @@ class Compress:
     
     def compress_file(self, file_path : str) -> str:
         self.check_temp_dir()
-        tar_path = f".{tempfile.NamedTemporaryFile().name}.tar.gz"
+        tar_path = f"{tempfile.NamedTemporaryFile().name}.tar.gz"
          
         with tarfile.open(tar_path, "w:gz") as tar:
             tar.add(file_path)
