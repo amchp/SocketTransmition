@@ -3,12 +3,15 @@ import socket
 from math import ceil
 from compress import Compress
 from encrypt import Encrypt
+from dotenv import load_dotenv
 
 CHUNK_SIZE = 250*1000
 KEY_SIZE = 1000*1000
 
 class Client:
     def __init__(self):
+        load_dotenv()
+        self.set_tcp_parameter()
         self.key = None
         
     def get_key(self, client_socket : socket) -> None:
