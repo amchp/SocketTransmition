@@ -35,7 +35,7 @@ class Server:
 
     def set_tcp_parameter(self) -> None:
         self.self_host = os.getenv("SELFIP")
-        self.connection_port = int(os.getenv("TCP_PORT"))
+        self.connection_port = int(os.getenv("PORT"))
 
     def start_server(self) -> None:
         print("Start Server", flush=True)

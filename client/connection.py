@@ -16,11 +16,14 @@ class Client:
         print(f"Received key: {key_data}")
         self.key = key_data
 
-    def start_client(self, target_host: str, connection_port: str, file_path : str) -> None:
+    def start_client(self, target_host: str, file_path : str) -> None:
         client_socket = self.get_socket()
-        client_socket.connect((target_host, connection_port))
+        client_socket.connect((target_host, self.connection_port ))
         self.get_key(client_socket)
         self.send_file(client_socket, file_path)
+        
+    def set_tcp_parameter(self) -> None:
+        self.connection_port = int(os.getenv("PORT"))
 
     def get_socket(self) -> socket:  # Creates a BT socket
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
