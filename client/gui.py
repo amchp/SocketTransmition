@@ -1,6 +1,6 @@
 import os
 import tkinter as tk 
-from tkinter import scrolledtext, filedialog
+from tkinter import messagebox, filedialog
 from connection import Client
 
 class GUI:
@@ -25,8 +25,12 @@ class GUI:
         archivo = filedialog.askopenfilename()
         ip = self.ip_field_entry.get()
         if archivo and ip:
-            nombre_archivo = os.path.abspath(archivo)
-            self.client.start_client(ip, nombre_archivo)
+            try:
+                nombre_archivo = os.path.abspath(archivo)
+                self.client.start_client(ip, nombre_archivo)
+                messagebox.showinfo("Success", f"{nombre_archivo} has been sent succesfully")
+            except:
+                messagebox.showerror("Error", "Error when sending the message check IP address and conectivity")
             
     def enviar_directorio(self):
         archivo = filedialog.askdirectory()
