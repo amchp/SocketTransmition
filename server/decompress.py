@@ -26,12 +26,9 @@ class Decompress:
         with tarfile.open(tar_path, "r:*") as tar:
             for member in tar.getmembers():
                 if member.isdir():
-                    continue 
-                 
-                temporal_file = tempfile.NamedTemporaryFile().name
-                temporal_file = os.path.basename(temporal_file)
+                    continue
                 
-                member.name = temporal_file + os.path.basename(member.name)
+                member.name = os.path.basename(member.name)
                 
                 tar.extract(member, "files")
                     
